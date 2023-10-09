@@ -4,6 +4,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Course } from "@prisma/client";
 import axios from "axios";
 import { Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -15,15 +16,13 @@ import * as z from "zod";
 
 
 interface DescriptionProps {
-    initialData: {
-        description: string;
-    };
+    initialData: Course
     courseId: string
 }
 
 const formSchema = z.object({
     description: z.string().min(1, {
-        message: "Title is required",
+        message: "Description is required",
     })
 })
 
@@ -40,7 +39,9 @@ const DescriptionForm = ({
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: initialData
+        defaultValues: {
+            description: initialData?.description || ""
+        }
     })
     const { isSubmitting, isValid } = form.formState
     
