@@ -1,7 +1,8 @@
 "use client"
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Course } from "@prisma/client";
@@ -21,9 +22,7 @@ interface PriceProps {
 }
 
 const formSchema = z.object({
-    description: z.string().min(1, {
-        message: "Description is required",
-    })
+    price: z.coerce.number()
 })
 
 const PriceForm = ({
@@ -40,7 +39,7 @@ const PriceForm = ({
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            description: initialData?.description || ""
+            price: initialData?.price || undefined
         }
     })
     const { isSubmitting, isValid } = form.formState
@@ -60,7 +59,7 @@ const PriceForm = ({
       
         <div className="mt-6 border bg-slate-100 rounded-md p-4">
             <div className="font-medium flex items-center justify-between">
-                Course description
+                Course price
 
                 <Button variant="ghost" onClick={toggleEdit}>
                     {isEditing && (
@@ -69,7 +68,7 @@ const PriceForm = ({
                     {!isEditing && (
                         <>
                              <Pencil className="h-4 w-4 mr-2" />
-                    Edit Description
+                    Edit price
                         </>
                     )}
                    
@@ -79,9 +78,9 @@ const PriceForm = ({
             {!isEditing && (
                 <p className={cn(
                     "text-sm mt-2",
-                    !initialData.description && "text-slate-500 italic"
+                    !initialData.price && "text-slate-500 italic"
                 )}>
-                    {initialData.description || "No description"}
+                    {initialData.price ? formatPrice(initialData.price) : "No price"}
                 </p>
             )}
             {isEditing && (
@@ -89,13 +88,15 @@ const PriceForm = ({
                     <form onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-4 mt-4">
                         <FormField
-                            name="description"
+                            name="price"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Textarea
+                                        <Input
+                                            type="number"
+                                            step="0.01"
                                             disabled={isSubmitting}
-                                            placeholder="e.g 'This is course is about'"
+                                            placeholder="e.g 'Set a price for your course'"
                                             {...field} />
                                     </FormControl>
                                     <FormMessage />
