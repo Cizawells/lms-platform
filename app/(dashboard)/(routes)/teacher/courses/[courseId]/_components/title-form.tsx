@@ -1,8 +1,14 @@
 "use client"
 import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import { Pencil } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import * as z from "zod";
 
 
@@ -24,6 +30,13 @@ const TitleForm = ({
     initialData,
     courseId
 }: TitleFormProps) => {
+    const [isEditing, setIsEditing] = useState(false)
+    
+    const toggleEdit = () => setIsEditing((current) => !current)
+
+    const router = useRouter();
+
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: initialData
@@ -31,7 +44,14 @@ const TitleForm = ({
     const { isSubmitting, isValid } = form.formState
     
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        console.log(values)
+       try {
+           await axios.patch(`/api/courses/${courseId}`, values);
+           toast.success("Course updated");
+           toggleEdit()
+           router.refresh()
+       } catch (error) {
+        toast("Something went wrong")
+       }
     }
 
     return (
@@ -40,11 +60,52 @@ const TitleForm = ({
             <div className="font-medium flex items-center justify-between">
                 Course title
 
-                <Button variant="ghost">
-                    <Pencil className="h-4 w-4 mr-2" />
+                <Button variant="ghost" onClick={toggleEdit}>
+                    {isEditing && (
+                        <>Cancel</>
+                    )}
+                    {!isEditing && (
+                        <>
+                             <Pencil className="h-4 w-4 mr-2" />
                     Edit title
+                        </>
+                    )}
+                   
                 </Button>
             </div>
+
+            {!isEditing && (
+                <p className="text-sm mt-2">
+                    {initialData.title}
+                </p>
+            )}
+            {isEditing && (
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-4 mt-4">
+                        <FormField
+                            name="title"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormControl>
+                                        <Input
+                                            disabled={isSubmitting}
+                                            placeholder="e.g 'Advanced web development'"
+                                            {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <div className="flex items-center gap-x-2">
+                            <Button disabled={!isValid || isSubmitting}>
+                                Save
+                            </Button>
+                        </div>
+                    </form>
+                </Form>
+            )}
     </div>
   )
 }
