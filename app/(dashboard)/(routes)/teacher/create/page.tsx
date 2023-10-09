@@ -9,8 +9,8 @@ import axios from "axios"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
+import toast from "react-hot-toast"
 import * as z from "zod"
-
 
 const formSchema = z.object({
     title: z.string().min(1, {
@@ -31,10 +31,11 @@ const router = useRouter()
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
        try {
-           const response = await axios.post("/api/course", values);
+           const response = await axios.post("/api/courses", values);
            router.push(`/teacher/courses/${response.data.id}`)
+           toast.success("Course created")
        } catch (error) {
-        console.log("Something went wrong")
+      toast.error("Something went wrong")
        }
     }
   return (
