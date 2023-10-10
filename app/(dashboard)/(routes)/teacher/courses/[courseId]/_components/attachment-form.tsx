@@ -26,7 +26,7 @@ const AttachmentForm = ({
 }: AttachmentFormProps) => {
     const [isEditing, setIsEditing] = useState(false)
     const toggleEdit = () => setIsEditing((current) => !current)
-    const [deletingId, setSeletingId] = useState<string | null>()
+    const [deletingId, setDeletingId] = useState<string | null>()
 
     const router = useRouter();
 
@@ -48,6 +48,19 @@ const AttachmentForm = ({
        } catch (error) {
         toast("Something went wrong")
        }
+    }
+
+    const onDelete = async (id: string) => {
+        try {
+            setDeletingId(id)
+            await axios.delete(`/api/courses/${courseId}/attachments/${id}`);
+            toast.success("Attachment deleted");
+            router.refresh()
+        } catch (error) {
+            toast.error("Something went wrong")
+        } finally {
+            setDeletingId(null)
+        }
     }
 
     return (
@@ -98,7 +111,9 @@ const AttachmentForm = ({
                                     
                                     )}
                                     {deletingId !== attachment.id && (
-                                        <Button className="ml-auto hover:opacity-75 transition">
+                                        <Button
+                                            onClick={() => onDelete(attachment.id)}
+                                            className="ml-auto hover:opacity-75 transition">
                                             <X className="h-4 w-4 " />
                                             
                                         </Button>
