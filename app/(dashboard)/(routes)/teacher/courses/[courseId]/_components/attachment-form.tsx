@@ -3,7 +3,7 @@ import { FileUpload } from "@/components/file-upload";
 import { Button } from "@/components/ui/button";
 import { Attachement, Course } from "@prisma/client";
 import axios from "axios";
-import { PlusCircle } from "lucide-react";
+import { File, Loader2, PlusCircle, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -25,8 +25,8 @@ const AttachmentForm = ({
     courseId
 }: AttachmentFormProps) => {
     const [isEditing, setIsEditing] = useState(false)
-    
     const toggleEdit = () => setIsEditing((current) => !current)
+    const [deletingId, setSeletingId] = useState<string | null>()
 
     const router = useRouter();
 
@@ -41,7 +41,7 @@ const AttachmentForm = ({
     
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
        try {
-           await axios.patch(`/api/courses/${courseId}/attachments`, values);
+           await axios.post(`/api/courses/${courseId}/attachments`, values);
            toast.success("Course updated");
            toggleEdit()
            router.refresh()
@@ -80,6 +80,34 @@ const AttachmentForm = ({
                             No attachments yet
                 </p>
                         )}
+                    {initialData.attachments.length > 0 && (
+                        <div className="space-y-2">
+                            {initialData.attachments.map(attachment => (
+                                <div
+                                    key={attachment.id}
+                                    className="flex items-center p-3 w-full bg-sky-100 border-sky-200 border text-sky-700 rounded-md">
+                                    <File className="h-4 w-4 mr-2 flex-shrink-0" />
+                                    <p className="text-xs line-clamp-1">
+                                        {attachment.name}
+                                    </p>
+                                    {deletingId === attachment.id && (
+                                        <div>
+                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                            
+                                        </div>
+                                    
+                                    )}
+                                    {deletingId !== attachment.id && (
+                                        <Button className="ml-auto hover:opacity-75 transition">
+                                            <X className="h-4 w-4 " />
+                                            
+                                        </Button>
+                                    
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                     </>
             )}
             {isEditing && (
