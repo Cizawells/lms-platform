@@ -12,6 +12,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import * as z from "zod";
+import ChaptersList from "./chapters-list";
 
 
 
@@ -114,7 +115,11 @@ const ChaptersForm = ({
                         !initialData.chapters.length && " No chapters"
 
                     }
-                    {/* { Add list of chapters} */}
+                    <ChaptersList
+                        onEdit={() => { }}
+                        onReorder={() => { }}
+                        items={initialData.chapters || []}
+                    />
                     </div>
             )}
             {!isCreating && (
