@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Chapter, MuxData } from "@prisma/client";
 import axios from "axios";
-import { ImageIcon, PlusCircle } from "lucide-react";
-import Image from "next/image";
+import { PlusCircle, Video } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -59,7 +58,7 @@ const ChapterVideo = ({
       
         <div className="mt-6 border bg-slate-100 rounded-md p-4">
             <div className="font-medium flex items-center justify-between">
-                Course image
+                Chapter video 
 
                 <Button variant="ghost" onClick={toggleEdit}>
                     {isEditing && (
@@ -68,13 +67,13 @@ const ChapterVideo = ({
                     {!isEditing && !initialData.videoUrl && (
                         <>
                              <PlusCircle className="h-4 w-4 mr-2" />
-                    Add an image
+                    Add a video
                         </>
                     )}
                     {!isEditing && initialData.videoUrl && (
                         <>
                              <PlusCircle className="h-4 w-4 mr-2" />
-                    Edit image
+                    Edit video
                         </>
                     )}
                    
@@ -84,23 +83,18 @@ const ChapterVideo = ({
             {!isEditing && (
                 !initialData.videoUrl ? (
                     <div className="flex items-center justify-center h-60 bg-slate-200 rounded-md">
-                        <ImageIcon className="h-10 w-10 text-slate-500"/>
+                        <Video className="h-10 w-10 text-slate-500"/>
                     </div>
                ) : (
                         <div className="relative aspect-video m-2">
-                            <Image
-                                alt="Upload"
-                                fill
-                                className="object-cover rounded-md"
-                                src={initialData.videoUrl}
-                            />
+                            Video uploaded
                             </div>
             )
             )}
             {isEditing && (
                 <div>
                     <FileUpload
-                        endpoint="courseImage"
+                        endpoint="chapterVideo"
                         onChange={(url) => {
                             if (url) {
                                 onSubmit({ videoUrl: url})
@@ -109,10 +103,16 @@ const ChapterVideo = ({
                     />
 
                     <div className="text-xs text-muted-foreground mt-4">
-                        16:9 aspect ratio recommended
+                        Upload this chapter&apos;s video
                     </div>
 
                     </div>
+            )}
+
+            {initialData.videoUrl && !isEditing && (
+                <div className="text-xs text-muted-foreground mt-2">
+                    Videos can take  few minutes to process. Refresh the pageg if video does not appear.
+                </div>
             )}
     </div>
   )
