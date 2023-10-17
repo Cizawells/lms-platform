@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Chapter, Course } from "@prisma/client";
 import axios from "axios";
-import { PlusCircle } from "lucide-react";
+import { Loader2, PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -58,9 +58,34 @@ const ChaptersForm = ({
        }
     }
 
+    const onReorder = async (updateData: { id: string, position: number}[] ) =>  {
+try {
+    setIsUpdating(true);
+
+    await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
+        list: updateData
+    })
+
+    toast.success("Chapters reordered");
+
+    router.refresh()
+} catch (error) {
+    toast.error("Something went wrong")
+} finally {
+    setIsUpdating(false)
+}
+    }
+
     return (
       
-        <div className="mt-6 border bg-slate-100 rounded-md p-4">
+        <div className="relative mt-6 border bg-slate-100 rounded-md p-4">
+
+            {isUpdating && (
+                <div className="absolute h-full w-full bg-slate-500/20 top-0 right-0 rounded-m flex items-center justify-center">
+
+                    <Loader2 className="animate-spin h-6 w-6 text-sky-700"/>
+                </div>
+            )}
             <div className="font-medium flex items-center justify-between">
                 Course chapters
 
@@ -84,7 +109,7 @@ const ChaptersForm = ({
                     <form onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-4 mt-4">
                         <FormField
-                            name="title"
+                             name="title"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
@@ -117,8 +142,8 @@ const ChaptersForm = ({
                     }
                     <ChaptersList
                         onEdit={() => { }}
-                        onReorder={() => { }}
                         items={initialData.chapters || []}
+                        onReorder={onReorder}
                     />
                     </div>
             )}
