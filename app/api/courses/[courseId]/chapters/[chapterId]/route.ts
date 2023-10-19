@@ -33,7 +33,7 @@ export async function DELETE(
     const chapter = await db.chapter.findUnique({
       where: {
         id: params.chapterId,
-        courseId: params.chapterId
+        courseId: params.courseId
       }
     })
 
