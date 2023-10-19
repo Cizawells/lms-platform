@@ -1,5 +1,6 @@
 "use client"
 import Editor from "@/components/editor";
+import Preview from "@/components/preview";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
@@ -83,10 +84,9 @@ const ChapterDescriptionForm = ({
                 )}>
                     {!initialData.description || "No description"}
                     {initialData.description && (
-                        // <Preview
-                        // value={initialData.description}
-                        // />
-                        <h1>{ initialData.description }</h1>
+                        <Preview
+                        value={initialData.description}
+                        />
                     )}
                 </div>
             )}
