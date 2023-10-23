@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+ import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
@@ -31,26 +31,21 @@ export async function PATCH(
             return new NextResponse("Not found", { status: 404})
         }
 
-        const hasPublishedChapter = course.chapters.some((chapter) => chapter.isPublished);
 
-        if (!course.title || !course.description || !course.imageUrl || !course.imageUrl || !hasPublishedChapter) {
-            return new NextResponse("Missing required fields", { status: 401})
-        }
-
-        const publishedCourse = await db.course.update({
+        const unpublishedCourse = db.course.update({
             where: {
                 id: params.courseId,
                 userId
             },
             data: {
-                isPublished: true
+                isPublished: false
             }
         })
 
-        return NextResponse.json(publishedCourse)
+        return NextResponse.json(unpublishedCourse)
         
     } catch (error) {
-        console.log("[COURRSE_ID_PUBLISH", error);
+        console.log("[COURRSE_ID_UNPUBLISH", error);
         return new NextResponse("internal error",  {status: 500})
     }
 }
