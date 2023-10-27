@@ -81,7 +81,7 @@ export const getChapter = async({
                     userId,
                     chapterId
                 }
-            }
+            }   
         });
 
         return {
