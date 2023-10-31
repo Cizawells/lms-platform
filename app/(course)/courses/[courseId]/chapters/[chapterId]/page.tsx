@@ -35,7 +35,11 @@ const ChapterIdPage = async ({
 if (!chapter || !course) {
     return redirect("/")
   }
+
   const isLocked = !chapter?.isFree && !purchase;
+  console.log(purchase)
+  console.log(chapter.isFree)
+  console.log(isLocked)
 
   const completeOnEnd = !!purchase && !userProgreess?.isCompleted
   return (

@@ -48,7 +48,7 @@ const CourseSidebar = async ({
                       label={chapter.title}
                       isCompleted={!!chapter.userProgress?.[0]?.isCompleted}
                       courseId={course.id}
-                      isLocked={chapter.isFree && !purchase}
+                      isLocked={!chapter.isFree && !purchase}
 
                   />
               ))}
