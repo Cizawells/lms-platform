@@ -6,6 +6,7 @@ import { auth } from "@clerk/nextjs";
 import { File } from "lucide-react";
 import { redirect } from "next/navigation";
 import CourseEnrollButton from "./_components/course-enroll-button";
+import CourseProgressButton from "./_components/course-progress-button";
 import { VideoPlayer } from "./_components/video-player";
 
 const ChapterIdPage = async ({
@@ -37,9 +38,6 @@ if (!chapter || !course) {
   }
 
   const isLocked = !chapter?.isFree && !purchase;
-  console.log(purchase)
-  console.log(chapter.isFree)
-  console.log(isLocked)
 
   const completeOnEnd = !!purchase && !userProgreess?.isCompleted
   return (
@@ -75,9 +73,12 @@ if (!chapter || !course) {
               {chapter.title}
             </h2>
             {purchase ? (
-              //TODO: ADD CourseProgressButton
-              <div>
-                </div>
+              <CourseProgressButton
+                chapterId={params.chapterId}
+                courseId={params.courseId}
+                nextChapterId={nextChapter?.id}
+                isCompleted={!!userProgreess?.isCompleted}
+              />
             ): (
                 <CourseEnrollButton
                   courseId={params.courseId}
